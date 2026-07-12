@@ -1,6 +1,6 @@
 {
   "city": "杭州",
-  "generated_at": "2026-07-12T16:58:04+08:00",
+  "generated_at": "2026-07-12T17:10:57+08:00",
   "stale": false,
   "date": {
     "solar": "2026 / 07 / 12",
@@ -9,18 +9,28 @@
     "ganzhi": "丙午马年 乙未月 丁亥日",
     "festival": ""
   },
-  "almanac": {
-    "yi": [
-      "沐浴",
-      "会友",
-      "修整"
-    ],
-    "ji": [
-      "拖延",
-      "冒雨",
-      "熬夜"
-    ]
-  },
+  "reminders": [
+    {
+      "label": "带伞",
+      "value": "要带"
+    },
+    {
+      "label": "洗衣",
+      "value": "不建议"
+    },
+    {
+      "label": "通风",
+      "value": "短时"
+    },
+    {
+      "label": "运动",
+      "value": "室内"
+    },
+    {
+      "label": "防晒",
+      "value": "普通"
+    }
+  ],
   "outing": {
     "umbrella": "要带",
     "clothing": "短袖",
@@ -28,7 +38,7 @@
     "scores": {
       "rain": 100,
       "comfort": 25,
-      "humidity": 82,
+      "humidity": 83,
       "uv": 17
     },
     "notes": [
@@ -37,49 +47,133 @@
     ]
   },
   "weather": {
-    "temperature": 28.9,
+    "temperature": 28.7,
     "condition": "小毛毛雨",
-    "humidity": 82,
+    "humidity": 83,
     "precipitation_probability": 100,
-    "wind": "南风 23km/h",
+    "wind": "南风 22km/h",
     "uv_index": 1.95,
-    "apparent_temperature": 32.6
+    "apparent_temperature": 32.5
   },
   "sun": {
     "sunrise": "2026-07-12T05:06",
     "sunset": "2026-07-12T19:03",
     "daylight": "13小时57分"
   },
-  "hotsearch": [
+  "hourly_forecast": [
     {
-      "rank": 1,
-      "title": "6月新增新冠确诊7.9万例",
-      "hot": "1280082"
+      "time": "17时",
+      "condition": "小毛毛雨",
+      "temperature": 29,
+      "apparent_temperature": 32,
+      "rain": 69
     },
     {
-      "rank": 2,
-      "title": "世界排名前4球队均晋级世界杯4强",
-      "hot": "881637"
+      "time": "18时",
+      "condition": "小毛毛雨",
+      "temperature": 28,
+      "apparent_temperature": 32,
+      "rain": 55
     },
     {
-      "rank": 3,
-      "title": "多场景防汛避险指南",
-      "hot": "770981"
+      "time": "19时",
+      "condition": "小毛毛雨",
+      "temperature": 28,
+      "apparent_temperature": 32,
+      "rain": 37
     },
     {
-      "rank": 4,
-      "title": "房间里爱放谷子和手办的天塌了",
-      "hot": "748877"
+      "time": "20时",
+      "condition": "阴",
+      "temperature": 28,
+      "apparent_temperature": 32,
+      "rain": 24
     },
     {
-      "rank": 5,
-      "title": "听起来很贵其实很便宜的东西",
-      "hot": "746933"
+      "time": "21时",
+      "condition": "阴",
+      "temperature": 28,
+      "apparent_temperature": 32,
+      "rain": 19
     },
     {
-      "rank": 6,
-      "title": "哈兰德说我现在已经彻底累垮了",
-      "hot": "717640"
+      "time": "22时",
+      "condition": "阴",
+      "temperature": 28,
+      "apparent_temperature": 32,
+      "rain": 19
+    },
+    {
+      "time": "23时",
+      "condition": "阴",
+      "temperature": 28,
+      "apparent_temperature": 31,
+      "rain": 20
+    },
+    {
+      "time": "00时",
+      "condition": "阴",
+      "temperature": 28,
+      "apparent_temperature": 32,
+      "rain": 23
+    },
+    {
+      "time": "01时",
+      "condition": "阴",
+      "temperature": 28,
+      "apparent_temperature": 32,
+      "rain": 27
+    },
+    {
+      "time": "02时",
+      "condition": "阴",
+      "temperature": 28,
+      "apparent_temperature": 32,
+      "rain": 31
+    },
+    {
+      "time": "03时",
+      "condition": "阴",
+      "temperature": 28,
+      "apparent_temperature": 32,
+      "rain": 33
+    },
+    {
+      "time": "04时",
+      "condition": "阴",
+      "temperature": 28,
+      "apparent_temperature": 32,
+      "rain": 33
+    }
+  ],
+  "daily_trend": [
+    {
+      "day": "今",
+      "condition": "强阵雨",
+      "high": 30,
+      "low": 25,
+      "rain": 100
+    },
+    {
+      "day": "明",
+      "condition": "毛毛雨",
+      "high": 33,
+      "low": 27,
+      "rain": 33
+    },
+    {
+      "day": "后",
+      "condition": "小毛毛雨",
+      "high": 37,
+      "low": 26,
+      "rain": 16
+    },
+    {
+      "day": "大后",
+      "condition": "小毛毛雨",
+      "high": 37,
+      "low": 28,
+      "rain": 41
     }
   ]
 }

@@ -64,12 +64,13 @@
   function render(nextData) {
     data = nextData || data || {};
     var date = data.date || {};
-    var almanac = data.almanac || {};
+    var reminders = data.reminders || [];
     var outing = data.outing || {};
     var scores = outing.scores || {};
     var weather = data.weather || {};
     var sun = data.sun || {};
-    var hot = data.hotsearch || [];
+    var hourly = data.hourly_forecast || [];
+    var dailyTrend = data.daily_trend || [];
 
     text("city", data.city || "杭州");
     text("updated", data.generated_at ? "数据 " + String(data.generated_at).replace("T", " ").slice(5, 16) : "离线预览");
@@ -78,8 +79,7 @@
     text("weekday", date.weekday);
     text("lunar", date.lunar);
     text("ganzhi", date.ganzhi);
-    text("yi", joinList(almanac.yi));
-    text("ji", joinList(almanac.ji));
+    renderReminders(reminders);
     text("umbrella", outing.umbrella);
     text("clothing", outing.clothing);
 
@@ -97,20 +97,52 @@
     text("condition", weather.condition);
     text("weather-detail", "湿度 " + (weather.humidity == null ? "--" : weather.humidity + "%") + " · 降水 " + (weather.precipitation_probability == null ? "--" : weather.precipitation_probability + "%") + " · 体感 " + (weather.apparent_temperature == null ? "--" : Math.round(weather.apparent_temperature) + "°"));
     text("wind", weather.wind || "--");
+    text("daily-trend", formatDailyTrend(dailyTrend));
 
     text("sunrise", shortTime(sun.sunrise));
     text("sunset", shortTime(sun.sunset));
     text("daylight", sun.daylight ? "白昼 " + sun.daylight : "白昼 --");
+    renderHourly(hourly);
+  }
 
-    var list = byId("hotlist");
+  function renderReminders(reminders) {
+    var list = byId("reminder-list");
     if (list) {
       var html = "";
       var i;
-      for (i = 0; i < hot.length && i < 6; i += 1) {
-        html += "<li><span>" + (hot[i].rank || i + 1) + "</span><b>" + escapeHtml(hot[i].title || "--") + "</b></li>";
+      for (i = 0; i < reminders.length && i < 5; i += 1) {
+        html += "<div class=\"reminder-item\"><span>" + escapeHtml(reminders[i].label || "--") + "</span><strong>" + escapeHtml(reminders[i].value || "--") + "</strong></div>";
       }
-      list.innerHTML = html || "<li><span>1</span><b>暂无热搜</b></li>";
+      list.innerHTML = html || "<div class=\"reminder-item\"><span>提醒</span><strong>暂无</strong></div>";
     }
+  }
+
+  function renderHourly(hourly) {
+    var list = byId("hourly-list");
+    if (list) {
+      var html = "";
+      var i;
+      for (i = 0; i < hourly.length && i < 12; i += 1) {
+        html += "<div class=\"hourly-row\"><span>" + escapeHtml(hourly[i].time || "--") + "</span><b>" + escapeHtml(shortCondition(hourly[i].condition || "--")) + "</b><em>" + Math.round(Number(hourly[i].temperature || 0)) + "°</em><i>" + pct(hourly[i].rain) + "%</i></div>";
+      }
+      list.innerHTML = html || "<div class=\"hourly-row\"><span>--</span><b>暂无</b><em>--</em><i>降水--</i></div>";
+    }
+  }
+
+  function formatDailyTrend(items) {
+    if (!items || !items.length) {
+      return "三日趋势 --";
+    }
+    var parts = [];
+    var i;
+    for (i = 1; i < items.length && parts.length < 2; i += 1) {
+      parts.push((items[i].day || "--") + " " + Math.round(Number(items[i].high || 0)) + "/" + Math.round(Number(items[i].low || 0)) + " " + (items[i].condition || "--"));
+    }
+    return "三日趋势 " + parts.join(" · ");
+  }
+
+  function shortCondition(value) {
+    return String(value).replace("小毛毛雨", "小雨").replace("毛毛雨", "小雨").replace("大毛毛雨", "大雨");
   }
 
   function escapeHtml(value) {

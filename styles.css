@@ -45,12 +45,12 @@ body {
 
 .section {
   border-bottom: 1px solid #777;
-  padding: 14px 0;
+  padding: 12px 0;
 }
 
 .hero {
-  padding-top: 22px;
-  padding-bottom: 22px;
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 
 .clock-panel {
@@ -111,10 +111,38 @@ body {
   line-height: 1.25;
 }
 
-.almanac .big-word {
-  font-size: 32px;
+.reminder-list {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.reminder-item {
+  display: table-cell;
+  width: 20%;
+  border-left: 1px solid #888;
+  padding-left: 14px;
+  box-sizing: border-box;
+}
+
+.reminder-item:first-child {
+  border-left: 0;
+  padding-left: 0;
+}
+
+.reminder-item span {
+  display: block;
+  font-size: 17px;
+  color: #555;
+  margin-bottom: 6px;
+}
+
+.reminder-item strong {
+  display: block;
+  font-size: 31px;
+  line-height: 1.2;
+  font-weight: normal;
   white-space: nowrap;
-  overflow: hidden;
 }
 
 .outing-main {
@@ -208,6 +236,15 @@ body {
   line-height: 1.7;
 }
 
+.daily-trend {
+  margin-top: 2px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #555;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 .sun-line {
   height: 46px;
   line-height: 46px;
@@ -225,43 +262,51 @@ body {
   color: #555;
 }
 
-.hot {
+.hourly {
   border-bottom: 0;
   padding-bottom: 0;
 }
 
-.hotlist {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  column-count: 2;
-  column-gap: 28px;
-  -webkit-column-count: 2;
-  -webkit-column-gap: 28px;
+.hourly-list {
+  column-count: 3;
+  column-gap: 24px;
+  -webkit-column-count: 3;
+  -webkit-column-gap: 24px;
 }
 
-.hotlist li {
-  height: 30px;
-  line-height: 30px;
-  font-size: 16px;
+.hourly-row {
+  height: 24px;
+  line-height: 24px;
+  font-size: 15px;
   white-space: nowrap;
   overflow: hidden;
 }
 
-.hotlist span {
+.hourly-row span {
   display: inline-block;
-  width: 22px;
-  height: 22px;
-  line-height: 22px;
-  margin-right: 8px;
-  text-align: center;
-  background: #333;
-  color: #fff;
-  font-size: 14px;
+  width: 42px;
+  color: #555;
 }
 
-.hotlist b {
+.hourly-row b {
+  display: inline-block;
+  width: 48px;
   font-weight: normal;
+}
+
+.hourly-row em {
+  display: inline-block;
+  width: 36px;
+  font-style: normal;
+  text-align: right;
+}
+
+.hourly-row i {
+  display: inline-block;
+  width: 42px;
+  font-style: normal;
+  text-align: right;
+  color: #555;
 }
 
 .clear {

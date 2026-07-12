@@ -212,14 +212,14 @@ def wind_label(direction: float | int | None, speed: float | int | None) -> str:
     return "%s %.0fkm/h" % (WIND_NAMES[idx], float(speed))
 
 
-def fetch_weather(previous: dict) -> tuple[dict, dict, dict, bool]:
+def fetch_weather(previous: dict) -> tuple[dict, dict, dict, list[dict], list[dict], list[dict], bool]:
     params = {
         "latitude": CITY["latitude"],
         "longitude": CITY["longitude"],
         "timezone": "Asia/Shanghai",
-        "forecast_days": 1,
+        "forecast_days": 4,
         "current": "temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m",
-        "hourly": "precipitation_probability,relative_humidity_2m,temperature_2m,uv_index",
+        "hourly": "weather_code,precipitation_probability,relative_humidity_2m,temperature_2m,apparent_temperature,uv_index",
         "daily": "weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,daylight_duration,uv_index_max,precipitation_probability_max",
     }
     url = "https://api.open-meteo.com/v1/forecast?" + urllib.parse.urlencode(params)
@@ -243,13 +243,19 @@ def fetch_weather(previous: dict) -> tuple[dict, dict, dict, bool]:
             "daylight": format_duration(daylight_seconds),
         }
         outing = build_outing(weather)
-        return weather, sun, outing, True
+        reminders = build_reminders(weather, outing)
+        hourly = build_hourly_forecast(raw)
+        daily_trend = build_daily_trend(raw)
+        return weather, sun, outing, reminders, hourly, daily_trend, True
     except Exception as exc:
         print("weather fetch failed: %s" % exc, file=sys.stderr)
         return (
             previous.get("weather") or fallback_weather(),
             previous.get("sun") or fallback_sun(),
             previous.get("outing") or build_outing(fallback_weather()),
+            previous.get("reminders") or build_reminders(fallback_weather(), build_outing(fallback_weather())),
+            previous.get("hourly_forecast") or fallback_hourly(),
+            previous.get("daily_trend") or fallback_daily_trend(),
             False,
         )
 
@@ -326,6 +332,117 @@ def build_outing(weather: dict) -> dict:
     }
 
 
+def build_reminders(weather: dict, outing: dict) -> list[dict]:
+    rain = pct(weather.get("precipitation_probability"))
+    humidity = pct(weather.get("humidity"))
+    wind = extract_wind_speed(weather.get("wind"))
+    apparent = float_or(weather.get("apparent_temperature"), float_or(weather.get("temperature"), 26))
+    uv = float_or(weather.get("uv_index"), 0)
+
+    if rain >= 60:
+        laundry = "不建议"
+    elif humidity >= 75:
+        laundry = "较慢"
+    elif wind >= 18:
+        laundry = "可晾"
+    else:
+        laundry = "普通"
+
+    if rain >= 50:
+        ventilate = "短时"
+    elif humidity >= 80:
+        ventilate = "除湿"
+    elif wind >= 28:
+        ventilate = "小开"
+    else:
+        ventilate = "适合"
+
+    if rain >= 50:
+        exercise = "室内"
+    elif apparent >= 33:
+        exercise = "避暑"
+    elif apparent <= 8:
+        exercise = "保暖"
+    else:
+        exercise = "户外"
+
+    if uv >= 6:
+        sunscreen = "要做"
+    elif uv >= 3:
+        sunscreen = "适量"
+    else:
+        sunscreen = "普通"
+
+    return [
+        {"label": "带伞", "value": outing.get("umbrella", "--")},
+        {"label": "洗衣", "value": laundry},
+        {"label": "通风", "value": ventilate},
+        {"label": "运动", "value": exercise},
+        {"label": "防晒", "value": sunscreen},
+    ]
+
+
+def build_hourly_forecast(raw: dict) -> list[dict]:
+    hourly = raw.get("hourly", {})
+    times = hourly.get("time") or []
+    temperatures = hourly.get("temperature_2m") or []
+    apparent = hourly.get("apparent_temperature") or []
+    rain = hourly.get("precipitation_probability") or []
+    codes = hourly.get("weather_code") or []
+    now = dt.datetime.now(TZ).replace(minute=0, second=0, microsecond=0)
+    rows = []
+    for idx, value in enumerate(times):
+        try:
+            hour = dt.datetime.fromisoformat(value).replace(tzinfo=TZ)
+        except ValueError:
+            continue
+        if hour < now:
+            continue
+        rows.append({
+            "time": hour.strftime("%H时"),
+            "condition": WEATHER_CODES.get(int(first_at(codes, idx, 0)), "未知"),
+            "temperature": round(float_or(first_at(temperatures, idx, 0), 0)),
+            "apparent_temperature": round(float_or(first_at(apparent, idx, 0), 0)),
+            "rain": pct(first_at(rain, idx, 0)),
+        })
+        if len(rows) >= 12:
+            break
+    return rows
+
+
+def build_daily_trend(raw: dict) -> list[dict]:
+    daily = raw.get("daily", {})
+    times = daily.get("time") or []
+    highs = daily.get("temperature_2m_max") or []
+    lows = daily.get("temperature_2m_min") or []
+    rain = daily.get("precipitation_probability_max") or []
+    codes = daily.get("weather_code") or []
+    names = ["今", "明", "后", "大后"]
+    rows = []
+    for idx, value in enumerate(times[:4]):
+        rows.append({
+            "day": names[idx] if idx < len(names) else value[5:],
+            "condition": WEATHER_CODES.get(int(first_at(codes, idx, 0)), "未知"),
+            "high": round(float_or(first_at(highs, idx, 0), 0)),
+            "low": round(float_or(first_at(lows, idx, 0), 0)),
+            "rain": pct(first_at(rain, idx, 0)),
+        })
+    return rows
+
+
+def first_at(values, index: int, default=None):
+    if isinstance(values, list) and 0 <= index < len(values):
+        return values[index]
+    return default
+
+
+def extract_wind_speed(value) -> float:
+    match = re.search(r"([0-9]+(?:\.[0-9]+)?)km/h", str(value or ""))
+    if not match:
+        return 0
+    return float_or(match.group(1), 0)
+
+
 def pct(value) -> int:
     try:
         number = int(round(float(value)))
@@ -339,68 +456,6 @@ def float_or(value, default: float) -> float:
         return float(value)
     except (TypeError, ValueError):
         return default
-
-
-def fetch_hotsearch(previous: dict) -> tuple[list[dict], bool]:
-    endpoints = [
-        (
-            "https://weibo.com/ajax/statuses/hot_band",
-            {"Referer": "https://weibo.com/hot/search"},
-        ),
-        (
-            "https://weibo.com/ajax/side/hotSearch",
-            {"Referer": "https://weibo.com/"},
-        ),
-        ("https://api.vvhan.com/api/hotlist/wbHot", {}),
-        ("https://api-hot.imsyy.top/weibo", {}),
-    ]
-    for url, headers in endpoints:
-        try:
-            raw = fetch_json(url, headers=headers)
-            parsed = parse_hotsearch(raw)
-            if parsed:
-                return parsed[:6], True
-        except Exception as exc:
-            print("hotsearch fetch failed from %s: %s" % (url, exc), file=sys.stderr)
-    old = previous.get("hotsearch") or []
-    if old:
-        return old[:6], False
-    return [
-        {"rank": 1, "title": "微博热搜接口暂不可用", "hot": ""},
-        {"rank": 2, "title": "天气与黄历仍可显示", "hot": ""},
-        {"rank": 3, "title": "下次定时任务会重试", "hot": ""},
-        {"rank": 4, "title": "Kindle 页面保持可读", "hot": ""},
-        {"rank": 5, "title": "数据失败自动兜底", "hot": ""},
-        {"rank": 6, "title": "无需 Mac 常开", "hot": ""},
-    ], False
-
-
-def parse_hotsearch(raw: dict) -> list[dict]:
-    candidates = raw.get("data") if isinstance(raw, dict) else None
-    if isinstance(candidates, dict):
-        for key in ("band_list", "realtime", "list", "cards"):
-            if isinstance(candidates.get(key), list):
-                candidates = candidates[key]
-                break
-    if not isinstance(candidates, list):
-        return []
-    result = []
-    for item in candidates:
-        if not isinstance(item, dict):
-            continue
-        if item.get("is_ad") or item.get("ad_type"):
-            continue
-        title = item.get("title") or item.get("name") or item.get("word") or item.get("note")
-        if not title:
-            continue
-        title = str(title).strip().strip("#")
-        if not title:
-            continue
-        hot = item.get("hot") or item.get("num") or item.get("raw_hot") or ""
-        result.append({"rank": len(result) + 1, "title": title, "hot": str(hot)})
-        if len(result) >= 6:
-            break
-    return result
 
 
 def fallback_weather() -> dict:
@@ -419,6 +474,31 @@ def fallback_sun() -> dict:
     return {"sunrise": "05:06", "sunset": "19:04", "daylight": "13小时58分"}
 
 
+def fallback_hourly() -> list[dict]:
+    return [
+        {"time": "17时", "condition": "小雨", "temperature": 29, "apparent_temperature": 33, "rain": 100},
+        {"time": "18时", "condition": "小雨", "temperature": 28, "apparent_temperature": 32, "rain": 95},
+        {"time": "19时", "condition": "阴", "temperature": 28, "apparent_temperature": 31, "rain": 80},
+        {"time": "20时", "condition": "阴", "temperature": 27, "apparent_temperature": 30, "rain": 65},
+        {"time": "21时", "condition": "阴", "temperature": 27, "apparent_temperature": 30, "rain": 55},
+        {"time": "22时", "condition": "阴", "temperature": 27, "apparent_temperature": 30, "rain": 45},
+        {"time": "23时", "condition": "阴", "temperature": 26, "apparent_temperature": 29, "rain": 40},
+        {"time": "00时", "condition": "阴", "temperature": 26, "apparent_temperature": 29, "rain": 35},
+        {"time": "01时", "condition": "阴", "temperature": 26, "apparent_temperature": 29, "rain": 30},
+        {"time": "02时", "condition": "阴", "temperature": 26, "apparent_temperature": 29, "rain": 28},
+        {"time": "03时", "condition": "阴", "temperature": 25, "apparent_temperature": 28, "rain": 25},
+        {"time": "04时", "condition": "阴", "temperature": 25, "apparent_temperature": 28, "rain": 22},
+    ]
+
+
+def fallback_daily_trend() -> list[dict]:
+    return [
+        {"day": "今", "condition": "小雨", "high": 29, "low": 25, "rain": 100},
+        {"day": "明", "condition": "雨", "high": 31, "low": 25, "rain": 75},
+        {"day": "后", "condition": "阴", "high": 33, "low": 26, "rain": 45},
+    ]
+
+
 def render_index(data: dict) -> None:
     html = INDEX_PATH.read_text(encoding="utf-8")
     payload = json.dumps(data, ensure_ascii=False, indent=6)
@@ -430,20 +510,20 @@ def render_index(data: dict) -> None:
 def main() -> None:
     now = dt.datetime.now(TZ)
     previous = load_previous()
-    weather, sun, outing, weather_ok = fetch_weather(previous)
-    hotsearch, hotsearch_ok = fetch_hotsearch(previous)
-    stale = not (weather_ok and hotsearch_ok)
+    weather, sun, outing, reminders, hourly, daily_trend, weather_ok = fetch_weather(previous)
+    stale = not weather_ok
 
     data = {
         "city": CITY["name"],
         "generated_at": now.isoformat(timespec="seconds"),
         "stale": stale,
         "date": build_date(now),
-        "almanac": build_almanac(now),
+        "reminders": reminders,
         "outing": outing,
         "weather": weather,
         "sun": sun,
-        "hotsearch": hotsearch,
+        "hourly_forecast": hourly,
+        "daily_trend": daily_trend,
     }
 
     DATA_PATH.parent.mkdir(parents=True, exist_ok=True)
