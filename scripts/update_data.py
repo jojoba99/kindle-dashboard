@@ -217,7 +217,7 @@ def fetch_weather(previous: dict) -> tuple[dict, dict, dict, list[dict], list[di
         "latitude": CITY["latitude"],
         "longitude": CITY["longitude"],
         "timezone": "Asia/Shanghai",
-        "forecast_days": 4,
+        "forecast_days": 7,
         "current": "temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m",
         "hourly": "weather_code,precipitation_probability,relative_humidity_2m,temperature_2m,apparent_temperature,uv_index",
         "daily": "weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,daylight_duration,uv_index_max,precipitation_probability_max",
@@ -405,7 +405,7 @@ def build_hourly_forecast(raw: dict) -> list[dict]:
             "apparent_temperature": round(float_or(first_at(apparent, idx, 0), 0)),
             "rain": pct(first_at(rain, idx, 0)),
         })
-        if len(rows) >= 12:
+        if len(rows) >= 24:
             break
     return rows
 
@@ -417,11 +417,18 @@ def build_daily_trend(raw: dict) -> list[dict]:
     lows = daily.get("temperature_2m_min") or []
     rain = daily.get("precipitation_probability_max") or []
     codes = daily.get("weather_code") or []
-    names = ["今", "明", "后", "大后"]
+    names = ["今", "明", "后", "周三", "周四", "周五", "周六"]
     rows = []
-    for idx, value in enumerate(times[:4]):
+    for idx, value in enumerate(times[:7]):
+        label = names[idx] if idx < len(names) else value[5:]
+        if idx >= 3:
+            try:
+                day = dt.date.fromisoformat(value)
+                label = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"][day.weekday()]
+            except ValueError:
+                label = value[5:]
         rows.append({
-            "day": names[idx] if idx < len(names) else value[5:],
+            "day": label,
             "condition": WEATHER_CODES.get(int(first_at(codes, idx, 0)), "未知"),
             "high": round(float_or(first_at(highs, idx, 0), 0)),
             "low": round(float_or(first_at(lows, idx, 0), 0)),
@@ -488,6 +495,18 @@ def fallback_hourly() -> list[dict]:
         {"time": "02时", "condition": "阴", "temperature": 26, "apparent_temperature": 29, "rain": 28},
         {"time": "03时", "condition": "阴", "temperature": 25, "apparent_temperature": 28, "rain": 25},
         {"time": "04时", "condition": "阴", "temperature": 25, "apparent_temperature": 28, "rain": 22},
+        {"time": "05时", "condition": "阴", "temperature": 25, "apparent_temperature": 28, "rain": 20},
+        {"time": "06时", "condition": "阴", "temperature": 25, "apparent_temperature": 28, "rain": 20},
+        {"time": "07时", "condition": "阴", "temperature": 26, "apparent_temperature": 29, "rain": 22},
+        {"time": "08时", "condition": "阴", "temperature": 27, "apparent_temperature": 30, "rain": 25},
+        {"time": "09时", "condition": "阴", "temperature": 28, "apparent_temperature": 31, "rain": 28},
+        {"time": "10时", "condition": "阴", "temperature": 29, "apparent_temperature": 32, "rain": 30},
+        {"time": "11时", "condition": "阴", "temperature": 30, "apparent_temperature": 33, "rain": 32},
+        {"time": "12时", "condition": "阴", "temperature": 31, "apparent_temperature": 34, "rain": 35},
+        {"time": "13时", "condition": "阴", "temperature": 31, "apparent_temperature": 34, "rain": 38},
+        {"time": "14时", "condition": "阴", "temperature": 31, "apparent_temperature": 34, "rain": 40},
+        {"time": "15时", "condition": "阴", "temperature": 30, "apparent_temperature": 33, "rain": 42},
+        {"time": "16时", "condition": "阴", "temperature": 30, "apparent_temperature": 33, "rain": 45},
     ]
 
 
@@ -496,6 +515,10 @@ def fallback_daily_trend() -> list[dict]:
         {"day": "今", "condition": "小雨", "high": 29, "low": 25, "rain": 100},
         {"day": "明", "condition": "雨", "high": 31, "low": 25, "rain": 75},
         {"day": "后", "condition": "阴", "high": 33, "low": 26, "rain": 45},
+        {"day": "周三", "condition": "阴", "high": 33, "low": 26, "rain": 35},
+        {"day": "周四", "condition": "小雨", "high": 32, "low": 25, "rain": 55},
+        {"day": "周五", "condition": "阴", "high": 34, "low": 26, "rain": 30},
+        {"day": "周六", "condition": "晴", "high": 35, "low": 27, "rain": 15},
     ]
 
 
@@ -519,7 +542,6 @@ def main() -> None:
         "stale": stale,
         "date": build_date(now),
         "reminders": reminders,
-        "outing": outing,
         "weather": weather,
         "sun": sun,
         "hourly_forecast": hourly,

@@ -145,65 +145,6 @@ body {
   white-space: nowrap;
 }
 
-.outing-main {
-  margin-bottom: 12px;
-}
-
-.outing-cell {
-  float: left;
-  width: 49%;
-}
-
-.answer {
-  font-size: 38px;
-  line-height: 1.25;
-}
-
-.bars {
-  margin-top: 8px;
-}
-
-.bar-row {
-  height: 24px;
-  line-height: 24px;
-  font-size: 16px;
-}
-
-.bar-row span {
-  float: left;
-  width: 48px;
-}
-
-.bar-row i {
-  float: left;
-  display: block;
-  width: 470px;
-  height: 12px;
-  margin-top: 6px;
-  border: 1px solid #555;
-  background: #fff;
-  font-style: normal;
-}
-
-.bar-row b {
-  display: block;
-  height: 12px;
-  width: 0;
-  background: #333;
-}
-
-.bar-row em {
-  float: right;
-  width: 72px;
-  text-align: right;
-  font-style: normal;
-}
-
-.notes {
-  margin-top: 10px;
-  font-size: 16px;
-}
-
 .weather-box,
 .sun-box {
   float: left;
@@ -236,15 +177,6 @@ body {
   line-height: 1.7;
 }
 
-.daily-trend {
-  margin-top: 2px;
-  font-size: 16px;
-  line-height: 1.5;
-  color: #555;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
 .sun-line {
   height: 46px;
   line-height: 46px;
@@ -268,44 +200,94 @@ body {
 }
 
 .hourly-list {
-  column-count: 3;
-  column-gap: 24px;
-  -webkit-column-count: 3;
-  -webkit-column-gap: 24px;
+  column-count: 4;
+  column-gap: 20px;
+  -webkit-column-count: 4;
+  -webkit-column-gap: 20px;
 }
 
 .hourly-row {
-  height: 24px;
-  line-height: 24px;
-  font-size: 15px;
+  height: 23px;
+  line-height: 23px;
+  font-size: 14px;
   white-space: nowrap;
   overflow: hidden;
 }
 
 .hourly-row span {
   display: inline-block;
-  width: 42px;
+  width: 36px;
   color: #555;
 }
 
 .hourly-row b {
   display: inline-block;
-  width: 48px;
+  width: 34px;
   font-weight: normal;
 }
 
 .hourly-row em {
   display: inline-block;
-  width: 36px;
+  width: 30px;
   font-style: normal;
   text-align: right;
 }
 
 .hourly-row i {
   display: inline-block;
-  width: 42px;
+  width: 34px;
   font-style: normal;
   text-align: right;
+  color: #555;
+}
+
+.daily {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.daily-list {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.daily-row {
+  display: table-cell;
+  border-left: 1px solid #888;
+  padding-left: 10px;
+  box-sizing: border-box;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.daily-row:first-child {
+  border-left: 0;
+  padding-left: 0;
+}
+
+.daily-row span,
+.daily-row b,
+.daily-row em,
+.daily-row i {
+  display: block;
+  font-style: normal;
+  font-weight: normal;
+}
+
+.daily-row span {
+  font-size: 16px;
+  color: #555;
+}
+
+.daily-row b {
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+.daily-row em,
+.daily-row i {
+  font-size: 15px;
   color: #555;
 }
 
@@ -327,9 +309,5 @@ body {
 
   .weekday {
     font-size: 36px;
-  }
-
-  .bar-row i {
-    width: 58%;
   }
 }
