@@ -1,0 +1,84 @@
+{
+  "city": "杭州",
+  "generated_at": "2026-07-12T15:53:38+08:00",
+  "stale": true,
+  "date": {
+    "solar": "2026 / 07 / 12",
+    "weekday": "星期日",
+    "lunar": "农历五月廿八",
+    "ganzhi": "丙午马年 乙未月 丁亥日",
+    "festival": ""
+  },
+  "almanac": {
+    "yi": [
+      "沐浴",
+      "会友",
+      "修整"
+    ],
+    "ji": [
+      "拖延",
+      "冒雨",
+      "熬夜"
+    ]
+  },
+  "outing": {
+    "umbrella": "不用",
+    "clothing": "短袖",
+    "summary": "谨慎安排",
+    "scores": {
+      "rain": 16,
+      "comfort": 51,
+      "humidity": 62,
+      "uv": 68
+    },
+    "notes": [
+      "注意防晒"
+    ]
+  },
+  "weather": {
+    "temperature": 30,
+    "condition": "晴",
+    "humidity": 62,
+    "precipitation_probability": 16,
+    "wind": "东南风 8km/h",
+    "uv_index": 7.5,
+    "apparent_temperature": 33
+  },
+  "sun": {
+    "sunrise": "05:06",
+    "sunset": "19:04",
+    "daylight": "13小时58分"
+  },
+  "hotsearch": [
+    {
+      "rank": 1,
+      "title": "微博热搜接口暂不可用",
+      "hot": ""
+    },
+    {
+      "rank": 2,
+      "title": "天气与黄历仍可显示",
+      "hot": ""
+    },
+    {
+      "rank": 3,
+      "title": "下次定时任务会重试",
+      "hot": ""
+    },
+    {
+      "rank": 4,
+      "title": "Kindle 页面保持可读",
+      "hot": ""
+    },
+    {
+      "rank": 5,
+      "title": "数据失败自动兜底",
+      "hot": ""
+    },
+    {
+      "rank": 6,
+      "title": "无需 Mac 常开",
+      "hot": ""
+    }
+  ]
+}

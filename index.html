@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="refresh" content="1800">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>Kindle 信息屏</title>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    window.__KINDLE_DATA__ = {
+      "city": "杭州",
+      "generated_at": "2026-07-12T15:53:38+08:00",
+      "stale": true,
+      "date": {
+            "solar": "2026 / 07 / 12",
+            "weekday": "星期日",
+            "lunar": "农历五月廿八",
+            "ganzhi": "丙午马年 乙未月 丁亥日",
+            "festival": ""
+      },
+      "almanac": {
+            "yi": [
+                  "沐浴",
+                  "会友",
+                  "修整"
+            ],
+            "ji": [
+                  "拖延",
+                  "冒雨",
+                  "熬夜"
+            ]
+      },
+      "outing": {
+            "umbrella": "不用",
+            "clothing": "短袖",
+            "summary": "谨慎安排",
+            "scores": {
+                  "rain": 16,
+                  "comfort": 51,
+                  "humidity": 62,
+                  "uv": 68
+            },
+            "notes": [
+                  "注意防晒"
+            ]
+      },
+      "weather": {
+            "temperature": 30,
+            "condition": "晴",
+            "humidity": 62,
+            "precipitation_probability": 16,
+            "wind": "东南风 8km/h",
+            "uv_index": 7.5,
+            "apparent_temperature": 33
+      },
+      "sun": {
+            "sunrise": "05:06",
+            "sunset": "19:04",
+            "daylight": "13小时58分"
+      },
+      "hotsearch": [
+            {
+                  "rank": 1,
+                  "title": "微博热搜接口暂不可用",
+                  "hot": ""
+            },
+            {
+                  "rank": 2,
+                  "title": "天气与黄历仍可显示",
+                  "hot": ""
+            },
+            {
+                  "rank": 3,
+                  "title": "下次定时任务会重试",
+                  "hot": ""
+            },
+            {
+                  "rank": 4,
+                  "title": "Kindle 页面保持可读",
+                  "hot": ""
+            },
+            {
+                  "rank": 5,
+                  "title": "数据失败自动兜底",
+                  "hot": ""
+            },
+            {
+                  "rank": 6,
+                  "title": "无需 Mac 常开",
+                  "hot": ""
+            }
+      ]
+};
+  </script>
+</head>
+<body>
+  <div class="page">
+    <div class="topbar">
+      <div class="top-left">
+        <span id="city">杭州</span>
+        <span class="divider">·</span>
+        <span id="updated">更新中</span>
+      </div>
+      <div class="top-right" id="status">数据正常</div>
+    </div>
+
+    <div class="hero section">
+      <div class="clock-panel">
+        <div id="clock" class="clock">--:--</div>
+      </div>
+      <div class="date-panel">
+        <div id="solar" class="solar">2026 / 07 / 12</div>
+        <div id="weekday" class="weekday">星期日</div>
+        <div id="lunar" class="muted">农历</div>
+        <div id="ganzhi" class="muted">干支</div>
+      </div>
+      <div class="clear"></div>
+    </div>
+
+    <div class="almanac section">
+      <div class="section-title">黄历宜忌</div>
+      <div class="half">
+        <div class="label">宜</div>
+        <div id="yi" class="big-word">整理</div>
+      </div>
+      <div class="half right-half">
+        <div class="label">忌</div>
+        <div id="ji" class="big-word">熬夜</div>
+      </div>
+      <div class="clear"></div>
+    </div>
+
+    <div class="outing section">
+      <div class="section-title">今日出门</div>
+      <div class="outing-main">
+        <div class="outing-cell">
+          <div class="label">带伞</div>
+          <div id="umbrella" class="answer">不用</div>
+        </div>
+        <div class="outing-cell">
+          <div class="label">建议</div>
+          <div id="clothing" class="answer">短袖</div>
+        </div>
+        <div class="clear"></div>
+      </div>
+      <div class="bars">
+        <div class="bar-row"><span>降水</span><i><b id="bar-rain"></b></i><em id="rain-value">--%</em></div>
+        <div class="bar-row"><span>舒适</span><i><b id="bar-comfort"></b></i><em id="comfort-value">--</em></div>
+        <div class="bar-row"><span>湿度</span><i><b id="bar-humidity"></b></i><em id="humidity-value">--%</em></div>
+        <div class="bar-row"><span>UV</span><i><b id="bar-uv"></b></i><em id="uv-value">--</em></div>
+      </div>
+      <div id="outing-notes" class="notes">正在计算</div>
+    </div>
+
+    <div class="middle-grid section">
+      <div class="weather-box">
+        <div class="section-title">天气</div>
+        <div><span id="temperature" class="temperature">--</span><span class="degree">°</span><span id="condition" class="condition">--</span></div>
+        <div id="weather-detail" class="detail">湿度 -- · 降水 --</div>
+        <div id="wind" class="detail">风力 --</div>
+      </div>
+      <div class="sun-box">
+        <div class="section-title">日出日落</div>
+        <div class="sun-line"><strong id="sunrise">--:--</strong><span>日出</span></div>
+        <div class="sun-line"><strong id="sunset">--:--</strong><span>日落</span></div>
+        <div id="daylight" class="detail">白昼 --</div>
+      </div>
+      <div class="clear"></div>
+    </div>
+
+    <div class="hot section">
+      <div class="section-title">微博热搜</div>
+      <ol id="hotlist" class="hotlist">
+        <li><span>1</span><b>正在加载热搜</b></li>
+      </ol>
+    </div>
+  </div>
+  <script src="assets/app.js"></script>
+</body>
+</html>

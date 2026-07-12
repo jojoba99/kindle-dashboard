@@ -1,0 +1,290 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #f7f7f7;
+  color: #222;
+  font-family: Georgia, "Times New Roman", "Songti SC", SimSun, serif;
+}
+
+body {
+  -webkit-text-size-adjust: none;
+}
+
+.page {
+  width: 718px;
+  min-height: 984px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #f7f7f7;
+  box-sizing: border-box;
+}
+
+.topbar {
+  height: 36px;
+  line-height: 36px;
+  border-bottom: 2px solid #333;
+  font-size: 18px;
+}
+
+.top-left {
+  float: left;
+}
+
+.top-right {
+  float: right;
+  font-size: 16px;
+}
+
+.divider,
+.muted,
+.detail,
+.notes {
+  color: #555;
+}
+
+.section {
+  border-bottom: 1px solid #777;
+  padding: 14px 0;
+}
+
+.hero {
+  padding-top: 22px;
+  padding-bottom: 22px;
+}
+
+.clock-panel {
+  float: left;
+  width: 55%;
+}
+
+.clock {
+  font-size: 84px;
+  line-height: 1;
+  font-weight: normal;
+}
+
+.date-panel {
+  float: right;
+  width: 40%;
+  text-align: center;
+  padding-top: 8px;
+}
+
+.solar {
+  font-size: 23px;
+  margin-bottom: 8px;
+}
+
+.weekday {
+  font-size: 40px;
+  line-height: 1.15;
+  margin-bottom: 8px;
+}
+
+.section-title {
+  display: inline-block;
+  padding: 0 18px 4px 0;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #333;
+  font-size: 18px;
+}
+
+.half {
+  float: left;
+  width: 49%;
+}
+
+.right-half {
+  border-left: 1px solid #888;
+  padding-left: 22px;
+  box-sizing: border-box;
+}
+
+.label {
+  font-size: 17px;
+  color: #555;
+}
+
+.big-word {
+  font-size: 38px;
+  line-height: 1.25;
+}
+
+.almanac .big-word {
+  font-size: 32px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.outing-main {
+  margin-bottom: 12px;
+}
+
+.outing-cell {
+  float: left;
+  width: 49%;
+}
+
+.answer {
+  font-size: 38px;
+  line-height: 1.25;
+}
+
+.bars {
+  margin-top: 8px;
+}
+
+.bar-row {
+  height: 24px;
+  line-height: 24px;
+  font-size: 16px;
+}
+
+.bar-row span {
+  float: left;
+  width: 48px;
+}
+
+.bar-row i {
+  float: left;
+  display: block;
+  width: 470px;
+  height: 12px;
+  margin-top: 6px;
+  border: 1px solid #555;
+  background: #fff;
+  font-style: normal;
+}
+
+.bar-row b {
+  display: block;
+  height: 12px;
+  width: 0;
+  background: #333;
+}
+
+.bar-row em {
+  float: right;
+  width: 72px;
+  text-align: right;
+  font-style: normal;
+}
+
+.notes {
+  margin-top: 10px;
+  font-size: 16px;
+}
+
+.weather-box,
+.sun-box {
+  float: left;
+  width: 49%;
+  box-sizing: border-box;
+}
+
+.sun-box {
+  border-left: 1px solid #888;
+  padding-left: 24px;
+}
+
+.temperature {
+  font-size: 52px;
+  line-height: 1.1;
+}
+
+.degree {
+  font-size: 34px;
+  vertical-align: top;
+}
+
+.condition {
+  font-size: 27px;
+  margin-left: 18px;
+}
+
+.detail {
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.sun-line {
+  height: 46px;
+  line-height: 46px;
+}
+
+.sun-line strong {
+  display: inline-block;
+  width: 116px;
+  font-size: 36px;
+  font-weight: normal;
+}
+
+.sun-line span {
+  font-size: 17px;
+  color: #555;
+}
+
+.hot {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.hotlist {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  column-count: 2;
+  column-gap: 28px;
+  -webkit-column-count: 2;
+  -webkit-column-gap: 28px;
+}
+
+.hotlist li {
+  height: 30px;
+  line-height: 30px;
+  font-size: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.hotlist span {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  line-height: 22px;
+  margin-right: 8px;
+  text-align: center;
+  background: #333;
+  color: #fff;
+  font-size: 14px;
+}
+
+.hotlist b {
+  font-weight: normal;
+}
+
+.clear {
+  clear: both;
+  height: 0;
+  overflow: hidden;
+}
+
+@media (max-width: 760px) {
+  .page {
+    width: auto;
+    min-height: 100vh;
+  }
+
+  .clock {
+    font-size: 76px;
+  }
+
+  .weekday {
+    font-size: 36px;
+  }
+
+  .bar-row i {
+    width: 58%;
+  }
+}
