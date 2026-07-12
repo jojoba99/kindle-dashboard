@@ -72,7 +72,7 @@
     var hot = data.hotsearch || [];
 
     text("city", data.city || "杭州");
-    text("updated", data.generated_at ? "更新 " + String(data.generated_at).replace("T", " ").slice(5, 16) : "离线预览");
+    text("updated", data.generated_at ? "数据 " + String(data.generated_at).replace("T", " ").slice(5, 16) : "离线预览");
     text("status", data.stale ? "数据较旧" : "数据正常");
     text("solar", date.solar);
     text("weekday", date.weekday);

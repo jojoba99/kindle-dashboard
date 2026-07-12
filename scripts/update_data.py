@@ -11,6 +11,7 @@ import datetime as dt
 import json
 import math
 import re
+import ssl
 import sys
 import urllib.error
 import urllib.parse
@@ -88,10 +89,23 @@ DAY_NAMES = ["初一", "初二", "初三", "初四", "初五", "初六", "初七
              "廿一", "廿二", "廿三", "廿四", "廿五", "廿六", "廿七", "廿八", "廿九", "三十"]
 
 
-def fetch_json(url: str, timeout: int = 15) -> dict:
-    req = urllib.request.Request(url, headers={"User-Agent": "kindle-dashboard/1.0"})
-    with urllib.request.urlopen(req, timeout=timeout) as resp:
-        return json.loads(resp.read().decode("utf-8"))
+def fetch_json(url: str, timeout: int = 15, headers: dict | None = None) -> dict:
+    request_headers = {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 KindleDashboard/1.0",
+        "Accept": "application/json,text/plain,*/*",
+    }
+    if headers:
+        request_headers.update(headers)
+    req = urllib.request.Request(url, headers=request_headers)
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            return json.loads(resp.read().decode("utf-8"))
+    except urllib.error.URLError as exc:
+        if "CERTIFICATE_VERIFY_FAILED" not in str(exc):
+            raise
+        context = ssl._create_unverified_context()
+        with urllib.request.urlopen(req, timeout=timeout, context=context) as resp:
+            return json.loads(resp.read().decode("utf-8"))
 
 
 def load_previous() -> dict:
@@ -328,12 +342,20 @@ def float_or(value, default: float) -> float:
 
 def fetch_hotsearch(previous: dict) -> list[dict]:
     endpoints = [
-        "https://api.vvhan.com/api/hotlist/wbHot",
-        "https://api-hot.imsyy.top/weibo",
+        (
+            "https://weibo.com/ajax/statuses/hot_band",
+            {"Referer": "https://weibo.com/hot/search"},
+        ),
+        (
+            "https://weibo.com/ajax/side/hotSearch",
+            {"Referer": "https://weibo.com/"},
+        ),
+        ("https://api.vvhan.com/api/hotlist/wbHot", {}),
+        ("https://api-hot.imsyy.top/weibo", {}),
     ]
-    for url in endpoints:
+    for url, headers in endpoints:
         try:
-            raw = fetch_json(url)
+            raw = fetch_json(url, headers=headers)
             parsed = parse_hotsearch(raw)
             if parsed:
                 return parsed[:6]
@@ -355,7 +377,7 @@ def fetch_hotsearch(previous: dict) -> list[dict]:
 def parse_hotsearch(raw: dict) -> list[dict]:
     candidates = raw.get("data") if isinstance(raw, dict) else None
     if isinstance(candidates, dict):
-        for key in ("list", "realtime", "cards"):
+        for key in ("band_list", "realtime", "list", "cards"):
             if isinstance(candidates.get(key), list):
                 candidates = candidates[key]
                 break
@@ -365,11 +387,16 @@ def parse_hotsearch(raw: dict) -> list[dict]:
     for item in candidates:
         if not isinstance(item, dict):
             continue
+        if item.get("is_ad") or item.get("ad_type"):
+            continue
         title = item.get("title") or item.get("name") or item.get("word") or item.get("note")
         if not title:
             continue
+        title = str(title).strip().strip("#")
+        if not title:
+            continue
         hot = item.get("hot") or item.get("num") or item.get("raw_hot") or ""
-        result.append({"rank": len(result) + 1, "title": str(title).strip(), "hot": str(hot)})
+        result.append({"rank": len(result) + 1, "title": title, "hot": str(hot)})
         if len(result) >= 6:
             break
     return result
