@@ -212,7 +212,7 @@ def wind_label(direction: float | int | None, speed: float | int | None) -> str:
     return "%s %.0fkm/h" % (WIND_NAMES[idx], float(speed))
 
 
-def fetch_weather(previous: dict) -> tuple[dict, dict, dict]:
+def fetch_weather(previous: dict) -> tuple[dict, dict, dict, bool]:
     params = {
         "latitude": CITY["latitude"],
         "longitude": CITY["longitude"],
@@ -243,13 +243,14 @@ def fetch_weather(previous: dict) -> tuple[dict, dict, dict]:
             "daylight": format_duration(daylight_seconds),
         }
         outing = build_outing(weather)
-        return weather, sun, outing
+        return weather, sun, outing, True
     except Exception as exc:
         print("weather fetch failed: %s" % exc, file=sys.stderr)
         return (
             previous.get("weather") or fallback_weather(),
             previous.get("sun") or fallback_sun(),
             previous.get("outing") or build_outing(fallback_weather()),
+            False,
         )
 
 
@@ -340,7 +341,7 @@ def float_or(value, default: float) -> float:
         return default
 
 
-def fetch_hotsearch(previous: dict) -> list[dict]:
+def fetch_hotsearch(previous: dict) -> tuple[list[dict], bool]:
     endpoints = [
         (
             "https://weibo.com/ajax/statuses/hot_band",
@@ -358,12 +359,12 @@ def fetch_hotsearch(previous: dict) -> list[dict]:
             raw = fetch_json(url, headers=headers)
             parsed = parse_hotsearch(raw)
             if parsed:
-                return parsed[:6]
+                return parsed[:6], True
         except Exception as exc:
             print("hotsearch fetch failed from %s: %s" % (url, exc), file=sys.stderr)
     old = previous.get("hotsearch") or []
     if old:
-        return old[:6]
+        return old[:6], False
     return [
         {"rank": 1, "title": "微博热搜接口暂不可用", "hot": ""},
         {"rank": 2, "title": "天气与黄历仍可显示", "hot": ""},
@@ -371,7 +372,7 @@ def fetch_hotsearch(previous: dict) -> list[dict]:
         {"rank": 4, "title": "Kindle 页面保持可读", "hot": ""},
         {"rank": 5, "title": "数据失败自动兜底", "hot": ""},
         {"rank": 6, "title": "无需 Mac 常开", "hot": ""},
-    ]
+    ], False
 
 
 def parse_hotsearch(raw: dict) -> list[dict]:
@@ -429,12 +430,9 @@ def render_index(data: dict) -> None:
 def main() -> None:
     now = dt.datetime.now(TZ)
     previous = load_previous()
-    weather, sun, outing = fetch_weather(previous)
-    hotsearch = fetch_hotsearch(previous)
-
-    stale = False
-    if previous:
-        stale = weather == previous.get("weather") or hotsearch == previous.get("hotsearch")
+    weather, sun, outing, weather_ok = fetch_weather(previous)
+    hotsearch, hotsearch_ok = fetch_hotsearch(previous)
+    stale = not (weather_ok and hotsearch_ok)
 
     data = {
         "city": CITY["name"],
